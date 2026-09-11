@@ -243,9 +243,31 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _hoist_global_args(argv: list) -> list:
+    """Allow global options like --datadir in any position: rewrite
+    ['send', '--datadir', 'X', ...] → ['--datadir', 'X', 'send', ...]."""
+    hoisted, rest, i = [], [], 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--datadir" and i + 1 < len(argv):
+            hoisted += [a, argv[i + 1]]
+            i += 2
+        elif a.startswith("--datadir="):
+            hoisted.append(a)
+            i += 1
+        else:
+            rest.append(a)
+            i += 1
+    return hoisted + rest
+
+
 def main(argv=None) -> None:
     parser = build_parser()
-    args = parser.parse_args(argv)
+    if argv is None:
+        import sys
+
+        argv = sys.argv[1:]
+    args = parser.parse_args(_hoist_global_args(list(argv)))
     args.datadir = args.datadir or node_mod.default_datadir()
     try:
         args.func(args)

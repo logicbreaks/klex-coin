@@ -30,10 +30,11 @@ jobs:
           KLEX_WALLET_PASS: ci-smoke-pass
         shell: bash
         run: |
-          klex init --datadir "$HOME/.klex-ci"
-          klex wallet new --datadir "$HOME/.klex-ci"
-          klex wallet show --datadir "$HOME/.klex-ci"
-          klex verify --datadir "$HOME/.klex-ci"
+          klex --datadir "$HOME/.klex-ci" init
+          klex --datadir "$HOME/.klex-ci" wallet new
+          klex --datadir "$HOME/.klex-ci" wallet show
+          klex --datadir "$HOME/.klex-ci" verify
+          klex --datadir "$HOME/.klex-ci" info
 
   docker:
     name: docker build
