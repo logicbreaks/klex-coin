@@ -9,11 +9,12 @@ experiment. Runs on Linux, macOS, and Windows (CI proves it on all three), or
 in Docker.
 
 ```
- _  ___     _______  __
-| |/ / |   | ____\ \/ /
-| ' /| |   |  _|  \  /
-| . \| |___| |___ /  \
-|_|\_\_____|_____/_/\_\
+ ____  __.__                 
+|    |/ _|  |   ____ ___  ___
+|      < |  | _/ __ \\  \/  /
+|    |  \|  |_\  ___/ >    < 
+|____|__ \____/\___  >__/\_ \
+        \/         \/      \/
 ```
 
 **KLEX** is its own blockchain: every transaction is signed with the NIST
