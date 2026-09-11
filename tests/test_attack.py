@@ -182,6 +182,7 @@ class TestMaliciousPeer(unittest.TestCase):
                 net.sync(victim, f"127.0.0.1:{port}")
             self.assertEqual(victim.state["height"], victim_height)
         finally:
+            srv.close()
             cleanup_node(victim)
 
 

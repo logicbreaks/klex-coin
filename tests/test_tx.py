@@ -16,8 +16,18 @@ class TestAddresses(unittest.TestCase):
     def test_typo_rejected(self):
         w = make_wallet()
         addr = w["address"]
-        mutated = addr[:-1] + ("a" if addr[-1] != "a" else "b")
-        self.assertFalse(crypto.address_is_valid(mutated))
+        body = addr[len(crypto.ADDR_PREFIX):]
+        # Every mutation of a checksum-relevant position must be rejected.
+        # The final body char may encode padding bits only, so single-char
+        # typos there are not guaranteed to change the decoded bytes.
+        for i in range(len(body) - 1):
+            for repl in "abcdefghijklmnopqrstuvwxyz234567":
+                if repl != body[i]:
+                    mutated = addr[: len(crypto.ADDR_PREFIX) + i] + repl + addr[len(crypto.ADDR_PREFIX) + i + 1 :]
+                    self.assertFalse(
+                        crypto.address_is_valid(mutated),
+                        f"accepted mutation at position {i} ({body[i]}→{repl})",
+                    )
 
     def test_garbage_rejected(self):
         self.assertFalse(crypto.address_is_valid("KLEX1"))
