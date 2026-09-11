@@ -112,16 +112,33 @@ class Node:
             raise ValueError("invalid miner address")
         limit = (max_txs or config.MAX_TXS_PER_BLOCK) - 1
         balances, nonces = dict(self.state["balances"]), dict(self.state["nonces"])
+        by_sender: dict = {}
+        for t in self.mempool:
+            by_sender.setdefault(t["from"], []).append(t)
+        for lst in by_sender.values():
+            lst.sort(key=lambda t: t["nonce"])
+        cursors = {s: 0 for s in by_sender}
         selected, stale = [], []
-        for t in sorted(self.mempool, key=lambda t: (-t.get("fee", 0), t["nonce"])):
-            if len(selected) >= limit:
+        while len(selected) < limit:
+            candidates = []
+            for s, lst in by_sender.items():
+                i = cursors[s]
+                while i < len(lst):
+                    t = lst[i]
+                    try:
+                        tx_mod.validate(t, balances, nonces)
+                        candidates.append((t, s, i))
+                        break
+                    except ValueError:
+                        stale.append(t)
+                        i += 1
+                cursors[s] = i
+            if not candidates:
                 break
-            try:
-                tx_mod.validate(t, balances, nonces)
-                tx_mod.apply(t, balances, nonces)
-                selected.append(t)
-            except ValueError:
-                stale.append(t)
+            t, s, i = max(candidates, key=lambda c: c[0].get("fee", 0))
+            tx_mod.apply(t, balances, nonces)
+            selected.append(t)
+            cursors[s] = i + 1
         if stale:
             stale_hashes = {tx_mod.tx_hash(t) for t in stale}
             self.mempool = [t for t in self.mempool if tx_mod.tx_hash(t) not in stale_hashes]

@@ -57,5 +57,33 @@ class TestNode(unittest.TestCase):
         self.assertEqual(chain.block_reward(420_000), 12)
 
 
+    def test_multi_pending_with_fees_all_mined(self):
+        self.node.mine_block(self.alice["address"])
+        carol = make_wallet()
+        low_fee_first = transfer(self.alice, carol["address"], 5, nonce=1, fee=0)
+        high_fee_second = transfer(self.alice, carol["address"], 3, nonce=2, fee=1)
+        self.node.submit_transfer(low_fee_first)
+        self.node.submit_transfer(high_fee_second)
+        self.node.mine_block(self.bob["address"])
+        self.assertEqual(self.node.balance(carol["address"]), 8)
+        self.assertEqual(
+            self.node.balance(self.alice["address"]),
+            chain.block_reward(1) - 5 - 3 - 1,
+        )
+        self.assertTrue(self.node.verify()["ok"])
+
+    def test_high_fee_pending_does_not_drop_valid_tx(self):
+        self.node.mine_block(self.alice["address"])
+        carol, dave = make_wallet(), make_wallet()
+        first = transfer(self.alice, carol["address"], 5, nonce=1, fee=0)
+        second = transfer(self.alice, dave["address"], 3, nonce=2, fee=2)
+        self.node.submit_transfer(first)
+        self.node.submit_transfer(second)
+        self.node.mine_block(self.bob["address"])
+        self.assertEqual(self.node.balance(carol["address"]), 5)
+        self.assertEqual(self.node.balance(dave["address"]), 3)
+        self.assertEqual(len(self.node.mempool), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

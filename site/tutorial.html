@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KLEX — live sessions</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.7.0/dist/bundle/asciinema-player.css">
+<script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.7.0/dist/bundle/asciinema-player.min.js"></script>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; font:16px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; background:#0b0f14; color:#d7e0ea; }
+  .wrap { max-width:960px; margin:0 auto; padding:24px 20px 80px; }
+  a { color:#7fd4a8; }
+  h1 { font-size:20px; letter-spacing:.1em; }
+  p.dim, .dim { color:#8fa3b8; }
+  asciinema-player { width:100%; }
+  h2 { font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:#8fa3b8; margin:48px 0 8px; }
+  a.back { color:#7fd4a8; text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><a class="back" href="index.html">← klex</a></h1>
+  <p class="dim">Real terminal sessions, recorded with <a href="https://asciinema.org">asciinema</a>.
+  Nothing is simulated: mining takes the time mining takes.</p>
+
+  <h2>Session 1 — from zero to your first mined block</h2>
+  <p class="dim">init → wallet → mine two real blocks → verify. The full walkthrough: <a href="https://github.com/logicbreaks/klex-coin/blob/main/docs/tutorials/01-first-block.md">docs/tutorials/01-first-block.md</a></p>
+  <asciinema-player src="casts/01-first-block.cast" preload></asciinema-player>
+
+  <h2>Session 2 — send and receive KLEX</h2>
+  <p class="dim">a second wallet → signed transfer → mined into a block → balances → full verify. Walkthrough: <a href="https://github.com/logicbreaks/klex-coin/blob/main/docs/tutorials/02-send-and-receive.md">docs/tutorials/02-send-and-receive.md</a></p>
+  <asciinema-player src="casts/02-send-and-receive.cast" preload></asciinema-player>
+</div>
+</body>
+</html>

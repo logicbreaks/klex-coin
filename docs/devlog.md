@@ -6,6 +6,24 @@ Keep it dated and honest. Newest entries on top.
 
 ---
 
+## 2026-09-11 · polish: tutorials, recordings, mempool fee-order fix
+
+- Site: fixed dead `#quickstart` anchor; added "In plain words" intro section,
+  tutorial page with embedded asciinema player (`site/tutorial.html`),
+  sessions recorded live via `tools/record_demo.py` (real pty, real mining).
+- README: readable figlet wordmark, "New to crypto?" section, glossary links
+  (pipx, ML-DSA/FIPS 204, SHA-3, liboqs, PBKDF2/Fernet), tutorials table.
+- Written walkthroughs: `docs/tutorials/01-first-block.md`,
+  `02-send-and-receive.md` — steps, expected output, troubleshooting tables.
+- **Bug found by recording session 2**: `mine_block` sorted pending txs by
+  fee only — a high-fee nonce-2 tx was validated before the pending nonce-1
+  tx from the same sender and wrongly dropped as stale. Fixed with per-sender
+  queue selection (nonce order respected, fee preference between senders);
+  regression tests added (`test_multi_pending_with_fees_all_mined`,
+  `test_high_fee_pending_does_not_drop_valid_tx`). 49 tests green.
+- Recorder fix: child env must be passed via `execvpe`, not `execvp` —
+  otherwise PS1/KLEX_WALLET_PASS silently never reach the demo shell.
+
 ## 2026-09-11 · published: repo + site + CI
 
 - Repo live: https://github.com/logicbreaks/klex-coin (public, MIT)
@@ -47,7 +65,7 @@ Keep it dated and honest. Newest entries on top.
 - Packaging (`pyproject.toml`): pip/pipx-installable `klex` command.
 - CI (`.github/workflows/ci.yml`): test matrix ubuntu/macos/windows ×
   py3.10/3.12 + docker build job.
-- Tests: 47 — tampering, forgery, double-spend, invalid PoW, corruption,
+- Tests: 49 — tampering, forgery, double-spend, invalid PoW, corruption,
   malicious peer, keystore, retarget math.
 
 ### Design decisions and why

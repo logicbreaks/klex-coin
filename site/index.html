@@ -54,7 +54,9 @@
     block carries one message that can never be changed or bought.
   </p>
   <div style="margin-top:26px;">
+    <a class="cta" href="#plain-words">New here?</a>
     <a class="cta" href="#quickstart">Run it</a>
+    <a class="cta ghost" href="tutorial.html">Watch a live demo</a>
     <a class="cta ghost" href="https://github.com/logicbreaks/klex-coin">Source on GitHub</a>
   </div>
 
@@ -63,6 +65,19 @@
     is built, not bought. Fair launch. No premine. Value starts at zero — like everything
     great.”<br><span class="dim">— the KLEX genesis block, permanent</span>
   </blockquote>
+</section>
+
+<section id="plain-words">
+  <h2>In plain words</h2>
+  <p style="max-width:700px;">Never touched a cryptocurrency? Here is the whole thing in five sentences.</p>
+  <ul style="max-width:680px;">
+    <li>A <a href="https://en.wikipedia.org/wiki/Blockchain">blockchain</a> is an append-only ledger that many computers agree on — you can add entries, but nobody can secretly rewrite history.</li>
+    <li><b>KLEX is its own blockchain.</b> Not a token on someone else's chain — it has its own rules, its own ledger, and its own software in the repo below.</li>
+    <li><a href="https://en.wikipedia.org/wiki/Proof_of_work">Proof of work</a> means new entries are only accepted when your computer has burned real CPU work solving a puzzle — that's "mining", and it pays 50 KLEX per block.</li>
+    <li>A <b>wallet</b> is just a keypair on your disk. Whoever holds the private key controls the coins — nothing else, no account, no company.</li>
+    <li>Every transaction is signed with <a href="https://csrc.nist.gov/pubs/fips/204/final">ML-DSA, the NIST post-quantum signature standard</a> — the same math designed to survive quantum computers.</li>
+  </ul>
+  <p class="dim" style="max-width:680px;">The whole coin is ~1,400 lines of Python. When you can read it, you own it — that is the security model of a small honest chain.</p>
 </section>
 
 <section>
@@ -83,9 +98,9 @@
   <pre><code>e62c84b217ee71ac7a3da19b36545956aa4e16aad1911e7f72f50529925868ee</code></pre>
 </section>
 
-<section>
+<section id="quickstart">
   <h2>Quickstart</h2>
-  <pre><code>git clone https://github.com/…/klex-coin && cd klex-coin
+  <pre><code>git clone https://github.com/logicbreaks/klex-coin && cd klex-coin
 pip install -r requirements.txt
 
 python -m klex init        # node + genesis (the message is in there)
@@ -93,6 +108,7 @@ python -m klex wallet new  # post-quantum keypair → KLEX1… address
 python -m klex mine        # earn 50 KLEX per block, real PoW
 python -m klex explore     # localhost block explorer
 python -m klex verify      # re-validate the whole chain from genesis</code></pre>
+  <p class="dim">Prefer tutorials with recorded sessions? <a href="tutorial.html">Watch the live demo</a> or read <a href="https://github.com/logicbreaks/klex-coin/tree/main/docs/tutorials">the written walkthroughs</a>.</p>
 </section>
 
 <section>
