@@ -1,6 +1,6 @@
 # KLEX
 
-[![ci](https://github.com/YOUR-NAME/klex-coin/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR-NAME/klex-coin/actions/workflows/ci.yml)
+[![ci](https://github.com/logicbreaks/klex-coin/actions/workflows/ci.yml/badge.svg)](https://github.com/logicbreaks/klex-coin/actions/workflows/ci.yml)
 
 A post-quantum, fair-launch proof-of-work coin, built from scratch as an open experiment.
 Runs on Linux, macOS, and Windows (CI proves it on all three), or in Docker.
@@ -58,7 +58,7 @@ A small but **real** cryptocurrency, complete in one repo:
 ## Install
 
 ```bash
-git clone https://github.com/YOUR-NAME/klex-coin && cd klex-coin
+git clone https://github.com/logicbreaks/klex-coin && cd klex-coin
 pip install -r requirements.txt     # or: pipx install . (gives you `klex`)
 ```
 
