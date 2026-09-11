@@ -10,7 +10,7 @@ Keep it dated and honest. Newest entries on top.
 
 - Site: fixed dead `#quickstart` anchor; added "In plain words" intro section,
   tutorial page with embedded asciinema player (`site/tutorial.html`),
-  sessions recorded live via `tools/record_demo.py` (real pty, real mining).
+  sessions recorded live in a real pty (recorder kept out of the repo).
 - README: readable figlet wordmark, "New to crypto?" section, glossary links
   (pipx, ML-DSA/FIPS 204, SHA-3, liboqs, PBKDF2/Fernet), tutorials table.
 - Written walkthroughs: `docs/tutorials/01-first-block.md`,

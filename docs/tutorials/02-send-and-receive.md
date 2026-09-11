@@ -120,12 +120,6 @@ in-memory chain — restart `serve` after mining. On the devlog roadmap.)
 
 Recorded live, including the fee-order mempool case:
 [player page](https://logicbreaks.github.io/klex-coin/tutorial.html) ·
-[raw .cast file](https://github.com/logicbreaks/klex-coin/tree/main/site/casts)
-
-Reproduce the recordings yourself:
-
-```bash
-python tools/record_demo.py --out my-session.cast --klex-home /tmp/klex-demo --script my-script.txt
-```
+[raw .cast files](https://github.com/logicbreaks/klex-coin/tree/main/site/casts)
 
 Back: [Tutorial 1 — first block](01-first-block.md)

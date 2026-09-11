@@ -4,33 +4,60 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KLEX — live sessions</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.7.0/dist/bundle/asciinema-player.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.7.0/dist/bundle/asciinema-player.min.css">
 <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.7.0/dist/bundle/asciinema-player.min.js"></script>
 <style>
   :root { color-scheme: dark; }
   body { margin:0; font:16px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; background:#0b0f14; color:#d7e0ea; }
-  .wrap { max-width:960px; margin:0 auto; padding:24px 20px 80px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:24px 20px 80px; }
   a { color:#7fd4a8; }
-  h1 { font-size:20px; letter-spacing:.1em; }
-  p.dim, .dim { color:#8fa3b8; }
-  asciinema-player { width:100%; }
+  h1 { font-size:20px; letter-spacing:.1em; margin:0 0 6px; }
+  .dim { color:#8fa3b8; }
   h2 { font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:#8fa3b8; margin:48px 0 8px; }
+  .player { background:#111820; border:1px solid #1d2733; border-radius:10px; padding:14px; }
+  .missing { color:#8fa3b8; font-size:14px; padding:18px; border:1px dashed #1d2733; border-radius:8px; }
   a.back { color:#7fd4a8; text-decoration:none; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1><a class="back" href="index.html">← klex</a></h1>
-  <p class="dim">Real terminal sessions, recorded with <a href="https://asciinema.org">asciinema</a>.
-  Nothing is simulated: mining takes the time mining takes.</p>
+  <p class="dim">Real terminal sessions, recorded with
+  <a href="https://asciinema.org">asciinema</a>. Nothing simulated — mining
+  takes the time mining takes.</p>
 
   <h2>Session 1 — from zero to your first mined block</h2>
-  <p class="dim">init → wallet → mine two real blocks → verify. The full walkthrough: <a href="https://github.com/logicbreaks/klex-coin/blob/main/docs/tutorials/01-first-block.md">docs/tutorials/01-first-block.md</a></p>
-  <asciinema-player src="casts/01-first-block.cast" preload></asciinema-player>
+  <p class="dim">init → wallet → two real mined blocks → verify ·
+  <a href="https://github.com/logicbreaks/klex-coin/blob/main/docs/tutorials/01-first-block.md">written walkthrough</a></p>
+  <div class="player" id="p1-slot"><div class="missing">loading…</div></div>
 
   <h2>Session 2 — send and receive KLEX</h2>
-  <p class="dim">a second wallet → signed transfer → mined into a block → balances → full verify. Walkthrough: <a href="https://github.com/logicbreaks/klex-coin/blob/main/docs/tutorials/02-send-and-receive.md">docs/tutorials/02-send-and-receive.md</a></p>
-  <asciinema-player src="casts/02-send-and-receive.cast" preload></asciinema-player>
+  <p class="dim">second wallet → signed transfer → fees → mined into a block → verify ·
+  <a href="https://github.com/logicbreaks/klex-coin/blob/main/docs/tutorials/02-send-and-receive.md">written walkthrough</a></p>
+  <div class="player" id="p2-slot"><div class="missing">loading…</div></div>
 </div>
+
+<script>
+  const CASTS = [
+    ["p1-slot", "casts/01-first-block.cast"],
+    ["p2-slot", "casts/02-send-and-receive.cast"],
+  ];
+  for (const [slot, src] of CASTS) {
+    const el = document.getElementById(slot);
+    fetch(src, { method: "HEAD" }).then(r => {
+      if (!r.ok) { el.innerHTML = '<div class="missing">recording not uploaded yet — drop the .cast file into site/casts/</div>'; return; }
+      el.innerHTML = "";
+      AsciinemaPlayer.create(src, el, {
+        theme: "asciinema",
+        speed: 1,
+        autoPlay: false,
+        loop: false,
+        posterFrame: "last",
+      });
+    }).catch(() => {
+      el.innerHTML = '<div class="missing">recording not uploaded yet</div>';
+    });
+  }
+</script>
 </body>
 </html>
