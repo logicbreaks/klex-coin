@@ -43,8 +43,8 @@ Genesis block hash (hard-coded chain identity):
 
 ```bash
 git clone https://github.com/logicbreaks/klex-coin && cd klex-coin
-pip install -r requirements.txt    # or: pipx install . (→ https://pipx.pypa.io)
-
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install .
 klex init          # your node + the genesis message
 klex wallet new    # post-quantum keypair → your KLEX1… address
 klex mine          # real CPU proof-of-work · 50 KLEX per block
@@ -53,12 +53,12 @@ klex verify        # re-validate the whole chain, live
 
 Mining a block takes a laptop a few seconds. That's the honest sound of proof-of-work.
 
-## See it before you believe it
+## Learn it in three tutorials
 
-| | Read | Watch |
-|---|---|---|
-| First block: node → wallet → mining → verification | [tutorial 1](docs/tutorials/01-first-block.md) | [recorded session](https://logicbreaks.github.io/klex-coin/tutorial.html) |
-| Send & receive: signatures, fees, mempool, balances | [tutorial 2](docs/tutorials/02-send-and-receive.md) | [recorded session](https://logicbreaks.github.io/klex-coin/tutorial.html) |
+| | What you do |
+|---|---|
+| [1 — first block](docs/tutorials/01-first-block.md) | pick your install path (venv / pipx / Docker) → node → wallet → mining → verification |
+| [2 — send & receive](docs/tutorials/02-send-and-receive.md) | second wallet → signed transfer → fees & mempool → balances → attack it yourself |
 
 ## What's inside
 
@@ -119,7 +119,7 @@ double-spends, corrupted files, malicious peers. See the
 - [Whitepaper](docs/whitepaper.md) — design, threat model, roadmap
 - [Tutorials](docs/tutorials/01-first-block.md) — written walkthroughs
 - [Project devlog](docs/devlog.md) — every decision, extension guide for v2
-- [Site](https://logicbreaks.github.io/klex-coin/) — plain-words intro + live sessions
+- [Site](https://logicbreaks.github.io/klex-coin/) — plain-words intro
 
 ---
 

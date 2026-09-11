@@ -1,28 +1,70 @@
 # Tutorial 1 — from zero to your first mined block
 
-Time: ~10 minutes (2 of them are mining).
-Video version: [watch the recorded session](https://logicbreaks.github.io/klex-coin/tutorial.html).
+Time: ~10 minutes (2 of them are mining). Prerequisites: Git and Python 3.10+
+— or Docker, that's path C.
 
-## 0. Prerequisites
+## Step 0 — pick your install path
 
-- Python **3.10 or newer** (`python3 --version`) — or Docker, see the README
-- ~50 MB of disk, a normal laptop CPU (this is all a KLEX node needs)
+All three give you the same `klex` command. Pick one.
 
-Get the code and install:
+### Path A — virtualenv (recommended)
+
+A [virtual environment](https://docs.python.org/3/library/venv.html) is a
+private Python playground for one project — whatever you install into it can't
+break your system Python, and vice versa. This is the standard, safest way to
+run Python software.
 
 ```bash
 git clone https://github.com/logicbreaks/klex-coin
 cd klex-coin
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install .
 ```
 
-Prefer a standalone command on your PATH?
+You are now inside the venv (your prompt usually shows `(.venv)`). The `klex`
+command is available; when you're done later, leave with `deactivate`.
+
+> If you ever see `klex: command not found` while the folder has a `.venv` —
+> the venv isn't activated. Run the activate line above.
+
+### Path B — pipx (standalone command, no activation)
+
+[pipx](https://pipx.pypa.io) installs a Python CLI app into its own
+environment and puts it on your PATH globally — `klex` works from any folder,
+no activation, no venv juggling:
 
 ```bash
-pipx install .        # pipx: https://pipx.pypa.io — installs the `klex` command in an isolated venv
+git clone https://github.com/logicbreaks/klex-coin
+cd klex-coin
+pipx install .
 ```
 
-All commands below work with either `python -m klex …` or the installed `klex …`.
+Upgrading later: `pipx upgrade klex-coin` (or re-run `pipx install .`).
+
+### Path C — Docker (everything in containers)
+
+[Docker Compose](https://docs.docker.com/compose/) runs pre-defined containers
+from one command. The repo ships three: `node` (the chain), `explorer` (web
+UI), `seed` (serves blocks to peers). Data persists in the `klexdata` volume.
+
+```bash
+git clone https://github.com/logicbreaks/klex-coin
+cd klex-coin
+docker compose up --build -d        # node initializes, explorer on 127.0.0.1:8337
+```
+
+A wallet needs a passphrase; in Docker you provide it as an environment
+variable instead of typing it:
+
+```bash
+docker compose run -e KLEX_WALLET_PASS=demo node python -m klex wallet new
+docker compose run node python -m klex mine --blocks 2
+docker compose run node python -m klex verify
+```
+
+In this tutorial, commands are written for paths A/B. On Docker, prefix each
+`klex …` with `docker compose run node` and use `python -m klex …`.
 
 ## Step 1 — start your node
 
@@ -45,7 +87,7 @@ allocation   : zero coins. Fair launch confirmed.
 
 What just happened: your node wrote the **genesis block** to `~/.klex/chain.json`.
 The message is part of the block, its hash is hard-coded in the software — every
-node on earth derives the same hash, so nobody can ever swap the message.
+node derives the same hash, so nobody can ever swap the message.
 
 > Where does the data live? `~/.klex/` by default. Use `--datadir <path>` (in
 > any position) or `KLEX_HOME` to run several independent nodes — handy later.
@@ -126,16 +168,11 @@ Genesis message, blocks, your address. Close it with Ctrl-C.
 
 | Problem | Meaning |
 |---|---|
-| `klex: command not found` | use `python -m klex …` or install with pipx |
+| `klex: command not found` | venv not activated — run the activate line from Step 0, or use `python -m klex …` |
+| `No module named klex` | you're outside the venv, or `pip install .` was skipped |
 | mining takes > 60 s | your machine is slower than the target; Ctrl-C, difficulty adapts after block 10 |
 | `passphrases do not match` | the two prompts must match exactly; empty is refused |
 | `chain exists but state file missing` | someone deleted `state.json`; restore from backup, then `klex verify` |
 | port 8337 busy | `klex explore --port 8400` |
-
-## Recorded session
-
-The complete session above was recorded live (mining at real difficulty):
-[player page](https://logicbreaks.github.io/klex-coin/tutorial.html) ·
-[raw .cast file](https://github.com/logicbreaks/klex-coin/tree/main/site/casts)
 
 Next: [Tutorial 2 — send and receive KLEX](02-send-and-receive.md)

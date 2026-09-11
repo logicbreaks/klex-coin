@@ -6,6 +6,23 @@ Keep it dated and honest. Newest entries on top.
 
 ---
 
+## 2026-09-11 · security scan handled, tutorials streamlined
+
+- External security scan (Aikido) opened a dependency-update PR: cryptography
+  42.0 → 49.0.0 (5 CVEs, mostly static-OpenSSL-in-wheels + PKCS12/ChaCha20/TLS
+  paths KLEX never calls). Evaluated: upgrade is correct hygiene; breaking
+  changes 42→49 do not touch our usage (Fernet+PBKDF2 only). Verified suite on
+  49.0.0 (49/49, keystore roundtrip exact). PR merged, then floors aligned to
+  `cryptography>=49.0` in BOTH requirements.txt and pyproject.toml (the PR had
+  pinned == and missed pyproject).
+- Decision: demo recordings/animations postponed — moved to `TODO.md`. All
+  video promises removed from README, site and tutorials; tutorials are now
+  clean step-by-step with three install paths (venv+pip / pipx / Docker) and
+  the corrected `pip install .` step (plain `pip install -r requirements.txt`
+  never provided the `klex` console command).
+- README slimmed and restructured for newcomers (fast start, collapsible
+  specs/security details); site demo page removed until recordings return.
+
 ## 2026-09-11 · polish: tutorials, recordings, mempool fee-order fix
 
 - Site: fixed dead `#quickstart` anchor; added "In plain words" intro section,

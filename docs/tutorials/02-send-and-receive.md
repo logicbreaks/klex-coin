@@ -1,8 +1,7 @@
 # Tutorial 2 — send and receive KLEX
 
 Time: ~10 minutes. Prerequisite: [Tutorial 1](01-first-block.md) — you have a
-node with a funded wallet.
-Video version: [watch the recorded session](https://logicbreaks.github.io/klex-coin/tutorial.html).
+node with a funded wallet (any install path).
 
 ## What you'll build
 
@@ -115,11 +114,5 @@ in-memory chain — restart `serve` after mining. On the devlog roadmap.)
 | `bad nonce: expected N` | your pending tx wasn't mined yet; send after the next block |
 | `insufficient balance` but it looks funded | a pending transfer already earmarked those coins |
 | `duplicate transaction already in mempool` | exactly what it says — it's queued |
-
-## Recorded session
-
-Recorded live, including the fee-order mempool case:
-[player page](https://logicbreaks.github.io/klex-coin/tutorial.html) ·
-[raw .cast files](https://github.com/logicbreaks/klex-coin/tree/main/site/casts)
 
 Back: [Tutorial 1 — first block](01-first-block.md)
