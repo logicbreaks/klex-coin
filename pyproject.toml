@@ -24,7 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "dilithium-py>=1.4.0",
-  "cryptography>=42.0",
+  "cryptography>=49.0",
   "flask>=3.0",
   "qrcode>=8.0",
 ]

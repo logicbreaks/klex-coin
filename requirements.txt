@@ -1,4 +1,4 @@
 dilithium-py>=1.4.0
-cryptography==49.0.0
+cryptography>=49.0
 flask>=3.0
 qrcode>=8.0
