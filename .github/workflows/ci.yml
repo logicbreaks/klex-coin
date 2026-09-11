@@ -25,7 +25,7 @@ jobs:
           pip install .
       - name: Run test suite
         run: python -m unittest discover -s tests -t . -v
-      - name: Smoke: init → wallet → verify
+      - name: "Smoke: init → wallet → verify"
         env:
           KLEX_WALLET_PASS: ci-smoke-pass
         shell: bash
