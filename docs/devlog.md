@@ -6,6 +6,22 @@ Keep it dated and honest. Newest entries on top.
 
 ---
 
+## 2026-09-11 · published: repo + site + CI
+
+- Repo live: https://github.com/logicbreaks/klex-coin (public, MIT)
+- Site live: https://logicbreaks.github.io/klex-coin/ (deployed by
+  `.github/workflows/pages.yml`, deploy-on-push of `site/`)
+- CI green on first full run: ubuntu/macos/windows × py3.10/3.12 + docker build
+- For the custom .de domain: follow `site/README.md` (add CNAME file + DNS),
+  Pages is already in "workflow" build mode.
+- Fixed along the way (lessons, keep for future):
+  - workflow YAML: a step name with a second `:` must be quoted
+  - `test_typo_rejected`: the LAST base32 char of an address may carry
+    padding bits only — single-char typos there are not guaranteed rejected;
+    the test now mutates every checksum-relevant position instead
+  - CLI accepts global options in any position (`_hoist_global_args` in
+    `klex/cli.py`) — users naturally write `klex mine --datadir X`
+
 ## 2026-09-11 · v1.0.0 — built overnight, end to end
 
 ### What was built
