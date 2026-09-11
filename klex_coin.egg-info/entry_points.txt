@@ -1,0 +1,2 @@
+[console_scripts]
+klex = klex.cli:main

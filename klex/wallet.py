@@ -1,4 +1,8 @@
-"""Wallet: ML-DSA (FIPS 204) keypairs, KLEX addresses, encrypted keystore."""
+"""Wallet: ML-DSA (FIPS 204) keypairs, KLEX addresses, encrypted keystore.
+
+KLEX_WALLET_PASS (environment variable) may provide the passphrase for
+non-interactive setups (CI, Docker). The keystore file is written 0600.
+"""
 
 import getpass
 import hashlib
@@ -14,6 +18,13 @@ from . import crypto
 
 KDF_ITERATIONS = 600_000
 KEYSTORE_VERSION = 1
+
+
+def get_passphrase(prompt: str) -> str:
+    env = os.environ.get("KLEX_WALLET_PASS")
+    if env:
+        return env
+    return getpass.getpass(prompt)
 
 
 def generate_keypair():
@@ -52,10 +63,16 @@ def decrypt_secret(enc: dict, passphrase: str) -> bytes:
 
 
 def create_wallet_file(path: str) -> dict:
-    passphrase = getpass.getpass("keystore passphrase: ")
-    again = getpass.getpass("repeat passphrase: ")
-    if passphrase != again or not passphrase:
-        raise ValueError("passphrases do not match (or empty)")
+    env_pass = os.environ.get("KLEX_WALLET_PASS")
+    if env_pass:
+        passphrase = env_pass
+    else:
+        passphrase = getpass.getpass("keystore passphrase: ")
+        again = getpass.getpass("repeat passphrase: ")
+        if passphrase != again or not passphrase:
+            raise ValueError("passphrases do not match (or empty)")
+    if not passphrase:
+        raise ValueError("empty passphrase")
     pubkey, secret = generate_keypair()
     address = crypto.pubkey_to_address(pubkey)
     wallet = {
@@ -65,10 +82,23 @@ def create_wallet_file(path: str) -> dict:
         "enc": encrypt_secret(secret, passphrase),
         "created": int(time.time()),
     }
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    write_wallet(wallet, path)
+    return wallet
+
+
+def write_wallet(wallet: dict, path: str) -> None:
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(fd, "w") as f:
         json.dump(wallet, f, indent=2)
+
+
+def rekey_wallet(path: str, old_passphrase: str, new_passphrase: str) -> dict:
+    wallet = load_wallet(path)
+    secret = decrypt_secret(wallet["enc"], old_passphrase)
+    wallet["enc"] = encrypt_secret(secret, new_passphrase)
+    wallet["rekeyed"] = int(time.time())
+    write_wallet(wallet, path)
     return wallet
 
 

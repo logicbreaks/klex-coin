@@ -24,8 +24,11 @@ def atomic_write_json(path: str, obj) -> None:
 def read_json(path: str, default):
     if not os.path.exists(path):
         return default
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"{path} is corrupted ({exc}); restore from backup") from exc
 
 
 class Node:
@@ -76,13 +79,28 @@ class Node:
         self.persist()
         return block
 
+    def projected_state(self, sender: str | None = None) -> tuple[dict, dict]:
+        """Chain state plus all pending mempool txs applied (optionally
+        filtered to one sender). This is what new txs are validated against,
+        so a sender can queue several transfers."""
+        balances = dict(self.state["balances"])
+        nonces = dict(self.state["nonces"])
+        pending = [t for t in self.mempool if sender is None or t["from"] == sender]
+        for t in sorted(pending, key=lambda x: x["nonce"]):
+            tx_mod.validate(t, balances, nonces)
+            tx_mod.apply(t, balances, nonces)
+        return balances, nonces
+
+    def next_nonce(self, address: str) -> int:
+        balances, nonces = self.projected_state(address)
+        return nonces.get(address, 0) + 1
+
     def submit_transfer(self, signed_tx: dict) -> str:
-        tx_mod.validate(signed_tx, self.state["balances"], self.state["nonces"])
         h = tx_mod.tx_hash(signed_tx)
         if any(tx_mod.tx_hash(t) == h for t in self.mempool):
             raise ValueError("duplicate transaction already in mempool")
-        if any(t["from"] == signed_tx["from"] and t["nonce"] == signed_tx["nonce"] for t in self.mempool):
-            raise ValueError("nonce already pending in mempool")
+        balances, nonces = self.projected_state(signed_tx["from"])
+        tx_mod.validate(signed_tx, balances, nonces)
         if len(self.mempool) >= config.MEMPOOL_CAP:
             raise ValueError("mempool full")
         self.mempool.append(signed_tx)
@@ -92,8 +110,23 @@ class Node:
     def mine_block(self, miner_addr: str, max_txs: int | None = None) -> dict:
         if not crypto.address_is_valid(miner_addr):
             raise ValueError("invalid miner address")
-        pending = sorted(self.mempool, key=lambda t: (-t.get("fee", 0), t["nonce"]))[: (max_txs or config.MAX_TXS_PER_BLOCK) - 1]
-        block = chain.build_block(self.blocks, self.state, pending, miner_addr)
+        limit = (max_txs or config.MAX_TXS_PER_BLOCK) - 1
+        balances, nonces = dict(self.state["balances"]), dict(self.state["nonces"])
+        selected, stale = [], []
+        for t in sorted(self.mempool, key=lambda t: (-t.get("fee", 0), t["nonce"])):
+            if len(selected) >= limit:
+                break
+            try:
+                tx_mod.validate(t, balances, nonces)
+                tx_mod.apply(t, balances, nonces)
+                selected.append(t)
+            except ValueError:
+                stale.append(t)
+        if stale:
+            stale_hashes = {tx_mod.tx_hash(t) for t in stale}
+            self.mempool = [t for t in self.mempool if tx_mod.tx_hash(t) not in stale_hashes]
+            atomic_write_json(self.mempool_path, self.mempool)
+        block = chain.build_block(self.blocks, self.state, selected, miner_addr)
         block, elapsed = miner_mod.solve(block)
         self.add_block(block)
         return block

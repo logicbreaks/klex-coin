@@ -1,0 +1,9 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+*.klex/
+site/
+docs/
+README.md
+docker-compose.yml

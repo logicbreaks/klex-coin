@@ -111,8 +111,10 @@ class TestChain(unittest.TestCase):
         first = transfer(self.alice, carol["address"], 5, nonce=1)
         self.node.submit_transfer(first)
         self.node.mempool.append(transfer(self.alice, dave["address"], 5, nonce=1))
-        with self.assertRaises(ValueError):
-            self.node.mine_block(self.bob["address"])
+        self.node.mine_block(self.bob["address"])
+        self.assertEqual(self.node.balance(carol["address"]), 5)
+        self.assertEqual(self.node.balance(dave["address"]), 0)
+        self.assertEqual(len(self.node.mempool), 0)
 
     def test_insufficient_balance_rejected(self):
         broke = make_wallet()

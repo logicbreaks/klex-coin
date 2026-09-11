@@ -1,0 +1,44 @@
+services:
+  node:
+    build: .
+    image: klex-coin
+    container_name: klex-node
+    volumes:
+      - klexdata:/data
+    environment:
+      KLEX_HOME: /data
+      KLEX_WALLET_PASS: ${KLEX_WALLET_PASS:-}
+    # Warm-up mining: `docker compose run node python -m klex mine --blocks 10`
+    command: ["sh", "-c", "python -m klex init || true; python -m klex info"]
+
+  explorer:
+    image: klex-coin
+    build: .
+    container_name: klex-explorer
+    depends_on:
+      - node
+    volumes:
+      - klexdata:/data:ro
+    environment:
+      KLEX_HOME: /data
+    ports:
+      - "127.0.0.1:8337:8337"
+    command: ["python", "-m", "klex", "explore", "--port", "8337"]
+
+  seed:
+    image: klex-coin
+    build: .
+    container_name: klex-seed
+    depends_on:
+      - node
+    volumes:
+      - klexdata:/data
+    environment:
+      KLEX_HOME: /data
+    # Publish only where you intend; 9333 serves blocks to peers.
+    ports:
+      - "9333:9333"
+    command: ["python", "-m", "klex", "serve", "--port", "9333"]
+
+volumes:
+  klexdata:

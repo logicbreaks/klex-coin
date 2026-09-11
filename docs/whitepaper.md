@@ -26,7 +26,7 @@ voluntarily using it. That is the point, not a defect.
 | Transaction model | Account-based, sequential nonces, whole-KLEX amounts |
 | Supply | 21,000,000 KLEX · 50 per block · halving every 210,000 blocks |
 | Genesis | Fixed timestamp · carries the founding message · allocates **zero** coins |
-| Implementation | ~1,700 lines of readable Python · MIT licensed |
+| Implementation | ~1,400 lines of readable Python · MIT licensed |
 
 The genesis block hash is hard-coded into the node software as the chain's
 identity:
@@ -87,7 +87,7 @@ That is the honest price of quantum resistance, and at this scale it is fine.
   same signatures, hardened implementation. Planned for v2.
 - Social attacks: phishing, passphrase theft, someone stealing your printed
   certificate. Keys are only as safe as where you keep them.
-- Bugs in 1,700 lines written overnight. Mitigation: the codebase is small
+- Bugs in 1,400 lines written overnight. Mitigation: the codebase is small
   enough to read in an afternoon, ships with a test suite covering the
   classic failure modes, and has no network surface by default (explorer and
   P2P bind to localhost only).

@@ -65,6 +65,21 @@ def cmd_wallet(args) -> None:
         print("wallet created (keystore encrypted, file mode 600)")
         print(f"address : {wallet['address']}")
         print("IMPORTANT: back up this file and your passphrase. No passphrase, no coins.")
+    elif args.action == "rekey":
+        path = wallet_path(args.datadir)
+        if not os.path.exists(path):
+            print("no wallet found — run: klex wallet new", file=sys.stderr)
+            raise SystemExit(1)
+        old = args.old_pass or wallet_mod.get_passphrase("current passphrase: ")
+        new = args.new_pass or wallet_mod.get_passphrase("new passphrase: ")
+        if not args.new_pass:
+            again = getpass.getpass("repeat new passphrase: ")
+            if new != again or not new:
+                raise ValueError("passphrases do not match (or empty)")
+        if not new:
+            raise ValueError("empty passphrase")
+        wallet_mod.rekey_wallet(path, old, new)
+        print("keystore re-encrypted with the new passphrase; address unchanged")
     else:
         print(require_wallet_file(args.datadir)["address"])
 
@@ -83,18 +98,13 @@ def cmd_balance(args) -> None:
 def cmd_send(args) -> None:
     n = require_chain(args.datadir)
     wallet = require_wallet_file(args.datadir)
-    passphrase = getpass.getpass("keystore passphrase: ")
+    passphrase = wallet_mod.get_passphrase("keystore passphrase: ")
     secret = wallet_mod.secret_key_from_wallet(wallet, passphrase)
     pubkey = crypto.decode_b64(wallet["pubkey_b64"])
     sender = wallet["address"]
-    pending_nonces = [t["nonce"] for t in n.mempool if t["from"] == sender]
-    if pending_nonces:
-        print("a transaction is already pending; wait for the next block to mine it", file=sys.stderr)
-        raise SystemExit(1)
-    nonce = n.state["nonces"].get(sender, 0) + 1
+    nonce = n.next_nonce(sender)
     tx = tx_mod.build_transfer(sender, args.to, args.amount, nonce, fee=args.fee, memo=args.memo or "")
-    signed = tx_mod.sign_transfer(tx, crypto.decode_b64(wallet["pubkey_b64"]), secret)
-    tx_mod.validate(signed, n.state["balances"], n.state["nonces"])
+    signed = tx_mod.sign_transfer(tx, pubkey, secret)
     h = n.submit_transfer(signed)
     print(f"tx submitted  {h}")
     print(f"{args.amount} KLEX → {args.to}" + (f"  memo: {args.memo}" if args.memo else ""))
@@ -189,9 +199,11 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("info", help="show node status")
     s.set_defaults(func=cmd_info)
 
-    s = sub.add_parser("wallet", help="create or show the wallet")
-    s.add_argument("action", choices=["new", "show"], nargs="?", default="show")
+    s = sub.add_parser("wallet", help="create, show, or re-encrypt the wallet")
+    s.add_argument("action", choices=["new", "show", "rekey"], nargs="?", default="show")
     s.add_argument("--force", action="store_true", help="overwrite existing wallet")
+    s.add_argument("--old-pass", default=None, help="current passphrase (automation; prefer interactive)")
+    s.add_argument("--new-pass", default=None, help="new passphrase (automation; prefer interactive)")
     s.set_defaults(func=cmd_wallet)
 
     s = sub.add_parser("balance", help="balance of an address (default: your wallet)")
@@ -239,7 +251,7 @@ def main(argv=None) -> None:
         args.func(args)
     except SystemExit:
         raise
-    except (ValueError, RuntimeError) as exc:
+    except (ValueError, RuntimeError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         raise SystemExit(1)
 
