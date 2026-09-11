@@ -126,8 +126,7 @@ Project memory and the full extension guide live in
 
 ## License
 
-MIT — take it, fork it, learn from it. ***REMOVED***
-
+MIT — take it, fork it, learn from it.
 
 ---
 

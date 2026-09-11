@@ -1,6 +1,6 @@
 # KLEX Whitepaper · v1.0
 
-*A post-quantum, fair-launch proof-of-work coin, built from scratch.*
+*A post-quantum, fair-launch proof-of-work coin.*
 
 ---
 
@@ -10,8 +10,8 @@ KLEX is a small, complete, self-owned cryptocurrency: a proof-of-work blockchain
 post-quantum signatures, a command-line wallet, a CPU miner, a local block explorer,
 peer-to-peer block sync, and a printable certificate of genesis.
 
-It was built from scratch, overnight, on a zero budget, as an open experiment —
-and it is a real network, not a simulation. The chain starts at exactly zero value
+It was built from scratch, overnight, on a zero budget — and it is a real
+network, not a simulation. The chain starts at exactly zero value
 and zero premine. If it ever has value, that value comes only from people
 voluntarily using it. That is the point, not a defect.
 

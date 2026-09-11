@@ -1,6 +1,6 @@
 # KLEX Devlog & Extension Guide
 
-This file is the project's memory. It lets anyone (a future you, a future contributor, or
+This file is the project's memory. It lets anyone (a future contributor, a maintainer, or
 another coding session of an AI agent) pick up exactly where things left off.
 Keep it dated and honest. Newest entries on top.
 
