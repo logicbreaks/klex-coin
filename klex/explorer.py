@@ -1,4 +1,10 @@
-"""Local block explorer (Flask, binds 127.0.0.1 only)."""
+"""Local block explorer (Flask, binds 127.0.0.1 only).
+
+All dynamic values are HTML-escaped before interpolation; memos are
+user-controlled data even on a localhost page.
+"""
+
+from html import escape as esc
 
 from flask import Flask, abort
 
@@ -24,8 +30,8 @@ def create_app(node) -> Flask:
                 f"""
                 <section class="card">
                   <h2>Genesis</h2>
-                  <p class="mono small">{genesis['hash']}</p>
-                  <blockquote>{genesis['txs'][0]['memo']}</blockquote>
+                  <p class="mono small">{esc(genesis['hash'])}</p>
+                  <blockquote>{esc(genesis['txs'][0]['memo'])}</blockquote>
                 </section>
                 <section class="card">
                   <h2>Status</h2>
@@ -57,12 +63,12 @@ def create_app(node) -> Flask:
             <section class="card">
               <h2>Block #{b['index']}</h2>
               <table class="kv">
-                <tr><td>hash</td><td class="mono">{chain.block_hash(b)}</td></tr>
-                <tr><td>prev_hash</td><td class="mono">{b['prev_hash']}</td></tr>
-                <tr><td>timestamp</td><td>{b['timestamp']} UTC</td></tr>
-                <tr><td>difficulty</td><td>{b['difficulty']} leading hex zeros</td></tr>
-                <tr><td>nonce</td><td>{b['nonce']}</td></tr>
-                <tr><td>tx_root</td><td class="mono">{b['tx_root']}</td></tr>
+                <tr><td>hash</td><td class="mono">{esc(chain.block_hash(b))}</td></tr>
+                <tr><td>prev_hash</td><td class="mono">{esc(b['prev_hash'])}</td></tr>
+                <tr><td>timestamp</td><td>{esc(str(b['timestamp']))} UTC</td></tr>
+                <tr><td>difficulty</td><td>{esc(str(b['difficulty']))} leading hex zeros</td></tr>
+                <tr><td>nonce</td><td>{esc(str(b['nonce']))}</td></tr>
+                <tr><td>tx_root</td><td class="mono">{esc(b['tx_root'])}</td></tr>
                 <tr><td>transactions</td><td>{len(b['txs'])}</td></tr>
               </table>
             </section>
@@ -78,15 +84,15 @@ def create_app(node) -> Flask:
         hist = node.address_history(address)
         rows = "".join(
             f'<tr><td><a href="/block/{h["height"]}">#{h["height"]}</a></td>'
-            f"<td>{h['tx'].get('type')}</td><td>{fmt_delta(h['tx'], address)}</td>"
-            f'<td>{h["tx"].get("memo", "")}</td></tr>'
+            f"<td>{esc(str(h['tx'].get('type')))}</td><td>{esc(fmt_delta(h['tx'], address))}</td>"
+            f'<td>{esc(h["tx"].get("memo", ""))}</td></tr>'
             for h in hist
         )
         return render_page(
             f"{address}",
             f"""
             <section class="card">
-              <h2>{address}</h2>
+              <h2>{esc(address)}</h2>
               <p>balance: <b>{node.balance(address)}</b> KLEX</p>
               <table class="kv">
                 <tr><th>block</th><th>type</th><th>delta</th><th>memo</th></tr>
@@ -115,16 +121,16 @@ def create_app(node) -> Flask:
 def render_tx(t: dict, height: int) -> str:
     if t.get("type") == "coinbase":
         return (
-            f'<div class="tx"><b>coinbase</b> +{t["amount"]} KLEX → '
-            f'<a href="/addr/{t["to"]}">{t["to"]}</a></div>'
+            f'<div class="tx"><b>coinbase</b> +{esc(str(t["amount"]))} KLEX → '
+            f'<a href="/addr/{esc(t["to"])}">{esc(t["to"])}</a></div>'
         )
     if t.get("type") == "genesis":
-        return f'<div class="tx"><b>genesis payload</b> · "{t.get("memo", "")}"</div>'
+        return f'<div class="tx"><b>genesis payload</b> · "{esc(t.get("memo", ""))}"</div>'
     return (
-        f'<div class="tx"><b>{t["type"]}</b> {t["amount"]} KLEX '
-        f'from <a href="/addr/{t["from"]}">{t["from"][:18]}…</a> '
-        f'to <a href="/addr/{t["to"]}">{t["to"][:18]}…</a>'
-        + (f' · memo "{t["memo"]}"' if t.get("memo") else "")
+        f'<div class="tx"><b>{esc(str(t["type"]))}</b> {esc(str(t["amount"]))} KLEX '
+        f'from <a href="/addr/{esc(t["from"])}">{esc(t["from"][:18])}…</a> '
+        f'to <a href="/addr/{esc(t["to"])}">{esc(t["to"][:18])}…</a>'
+        + (f' · memo "{esc(t["memo"])}"' if t.get("memo") else "")
         + "</div>"
     )
 
@@ -143,7 +149,7 @@ def render_block_list(blocks) -> str:
     rows = "".join(
         f'<tr><td><a href="/block/{b["index"]}">#{b["index"]}</a></td>'
         f"<td>{b['timestamp']}</td><td>{len(b['txs'])} tx(s)</td>"
-        f'<td class="mono small">{chain.block_hash(b)[:24]}…</td></tr>'
+        f'<td class="mono small">{esc(chain.block_hash(b)[:24])}…</td></tr>'
         for b in blocks
     )
     return f'<table class="kv"><tr><th>height</th><th>time</th><th>txs</th><th>hash</th></tr>{rows}</table>'

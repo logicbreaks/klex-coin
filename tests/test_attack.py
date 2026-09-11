@@ -152,6 +152,46 @@ class TestBlockCapacity(unittest.TestCase):
             cleanup_node(node)
 
 
+class TestExplorerEscaping(unittest.TestCase):
+    def setUp(self):
+        fast_mode()
+        self.node = make_node()
+
+    def tearDown(self):
+        cleanup_node(self.node)
+
+    def test_memo_html_injection_never_reaches_html(self):
+        from klex.explorer import render_tx
+
+        evil = {
+            "type": "transfer",
+            "from": "<img src=x onerror=alert(1)>",
+            "to": "KLEX1qqgb4l5jkzjwzujuulfepzp5qxdozwgxhewdefy",
+            "amount": 1,
+            "fee": 0,
+            "nonce": 1,
+            "timestamp": 1,
+            "memo": "<script>alert(1)</script>",
+            "pubkey_b64": "aGk=",
+            "sig_b64": "aGk=",
+        }
+        out = render_tx(evil, 1)
+        self.assertNotIn("<script", out)
+        self.assertNotIn("<img", out)
+        self.assertIn("&lt;script&gt;", out)
+        self.assertIn("&lt;img", out)
+
+    def test_tampered_block_fields_never_reach_html(self):
+        from klex import explorer
+
+        self.node.blocks[0]["prev_hash"] = "<script>x</script>"
+        app = explorer.create_app(self.node)
+        client = app.test_client()
+        html = client.get("/block/0").get_data(as_text=True)
+        self.assertNotIn("<script>", html)
+        self.assertIn("&lt;script&gt;", html)
+
+
 class TestMaliciousPeer(unittest.TestCase):
     def test_sync_rejects_invalid_blocks(self):
         fast_mode()

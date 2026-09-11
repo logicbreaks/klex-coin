@@ -6,6 +6,25 @@ Keep it dated and honest. Newest entries on top.
 
 ---
 
+## 2026-09-11 · external audit received, triage started
+
+- Independent external security audit (LLM-based, whole-repo) received.
+  Executive summary: no confirmed vulnerabilities within the stated threat
+  model (no coin creation, double-spend, or signature forging); risks are
+  operational/architectural — no network auth/encryption, small-network
+  consensus params, JSON storage, pure-Python reference signatures. This
+  converges with our own documented threat model. Awaiting the full
+  medium/low findings list for item-by-item triage (reproduce → fix or
+  debunk).
+- Proactive fix while waiting (suspected-weak-spots item from the audit
+  brief plan): the explorer interpolated user-controlled data (tx memos) and
+  chain-file fields (prev_hash, tx_root) into HTML via unescaped f-strings —
+  HTML injection, scriptable even on localhost. All dynamic values now pass
+  through `html.escape`; regression tests added, including a Flask test
+  client end-to-end check with a tampered chain.json. Tests: 51.
+- Audit-brief document for specialized auditor AIs: planned
+  (`docs/audit-brief.md`), decision pending with the maintainer.
+
 ## 2026-09-11 · security scan handled, tutorials streamlined
 
 - External security scan (Aikido) opened a dependency-update PR: cryptography
@@ -82,7 +101,7 @@ Keep it dated and honest. Newest entries on top.
 - Packaging (`pyproject.toml`): pip/pipx-installable `klex` command.
 - CI (`.github/workflows/ci.yml`): test matrix ubuntu/macos/windows ×
   py3.10/3.12 + docker build job.
-- Tests: 49 — tampering, forgery, double-spend, invalid PoW, corruption,
+- Tests: 51 — tampering, forgery, double-spend, invalid PoW, corruption,
   malicious peer, keystore, retarget math.
 
 ### Design decisions and why

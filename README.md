@@ -108,7 +108,7 @@ the honest fix is more miners), side-channel attacks on the reference signing
 library (hardened [liboqs](https://github.com/open-quantum-safe/liboqs) is the
 v1.2 upgrade), phishing, or weak passphrases.
 
-49 adversarial tests cover the classic attacks — tampering, forgery,
+51 adversarial tests cover the classic attacks — tampering, forgery,
 double-spends, corrupted files, malicious peers. See the
 [whitepaper threat model](docs/whitepaper.md#5-what-the-security-model-protects--and-what-it-does-not).
 
