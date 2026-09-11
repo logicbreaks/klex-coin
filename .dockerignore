@@ -6,4 +6,5 @@ __pycache__/
 site/
 docs/
 README.md
-docker-compose.yml
+docker-compose.yml.env
+*.env

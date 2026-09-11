@@ -5,3 +5,7 @@ __pycache__/
 *.klex/
 !site/**
 .DS_Store
+# local secrets — never commit
+*.env
+.env
+*.token
