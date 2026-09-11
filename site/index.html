@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KLEX — a post-quantum, fair-launch coin</title>
+<meta name="description" content="KLEX is a small, real, proof-of-work cryptocurrency with NIST post-quantum signatures, built from scratch as an open experiment. Fair launch. Zero premine. Value starts at zero.">
+<style>
+  :root { color-scheme: dark; --bg:#0b0f14; --panel:#111820; --line:#1d2733; --ink:#d7e0ea; --dim:#8fa3b8; --acc:#7fd4a8; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:var(--bg); color:var(--ink); }
+  a { color:var(--acc); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .wrap { max-width:880px; margin:0 auto; padding:0 20px; }
+  header { border-bottom:1px solid var(--line); }
+  .nav { display:flex; align-items:center; justify-content:space-between; padding:20px 0; }
+  .brand { font-weight:700; letter-spacing:.25em; color:var(--acc); }
+  .nav small { color:var(--dim); }
+  .hero { padding:70px 0 50px; }
+  .hero h1 { font-size:clamp(34px,7vw,64px); margin:0 0 10px; letter-spacing:.12em; }
+  .hero h1 span { color:var(--acc); }
+  .hero p.tag { margin:0 0 26px; color:var(--dim); font-size:18px; }
+  .cta { display:inline-block; border:1px solid var(--acc); padding:10px 18px; border-radius:8px; margin-right:12px; }
+  .cta.ghost { border-color:var(--line); color:var(--dim); }
+  .quote { border-left:3px solid var(--acc); padding:14px 20px; background:var(--panel); border-radius:0 10px 10px 0; margin:40px 0; font-style:italic; color:#cfe9db; }
+  section { padding:40px 0; border-top:1px solid var(--line); }
+  h2 { font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin:0 0 18px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
+  .fact { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+  .fact b { color:var(--acc); display:block; margin-bottom:4px; }
+  .fact span { color:var(--dim); font-size:14px; }
+  code, .mono { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:1px 7px; font-size:14px; word-break:break-all; }
+  pre { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 20px; overflow-x:auto; line-height:1.8; }
+  pre code { background:none; border:none; padding:0; }
+  ul { padding-left:20px; }
+  li { margin:6px 0; }
+  .dim { color:var(--dim); }
+  footer { border-top:1px solid var(--line); padding:30px 0 60px; color:var(--dim); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header><div class="nav">
+  <span class="brand">KLEX</span>
+  <small class="dim">a small, honest coin</small>
+</div></header>
+
+<section style="border-top:none">
+  <h1 style="margin:0 0 6px; font-size:22px;">A post-quantum, fair-launch coin, built from scratch.</h1>
+  <p class="tag" style="color:var(--dim); max-width:640px;">
+    KLEX is a real proof-of-work blockchain: every transaction is signed with the NIST
+    post-quantum standard ML-DSA, every block is mined with real CPU work, and the genesis
+    block carries one message that can never be changed or bought.
+  </p>
+  <div style="margin-top:26px;">
+    <a class="cta" href="#quickstart">Run it</a>
+    <a class="cta ghost" href="https://github.com/YOUR-NAME/klex-coin">Source on GitHub</a>
+  </div>
+
+  <blockquote>
+    “Built overnight with zero budget and full intent, for the one who taught me the future
+    is built, not bought. Fair launch. No premine. Value starts at zero — like everything
+    great.”<br><span class="dim">— the KLEX genesis block, permanent</span>
+  </blockquote>
+</section>
+
+<section>
+  <h2>Facts</h2>
+  <div class="grid">
+    <div class="fact"><b>ML-DSA · FIPS 204</b><span>post-quantum signatures on every transaction</span></div>
+    <div class="fact"><b>KlexHash</b><span>double SHA3-256 proof of work</span></div>
+    <div class="fact"><b>60 s blocks</b><span>difficulty retargets every 10 blocks</span></div>
+    <div class="fact"><b>21,000,000 cap</b><span>50 KLEX per block, halving every 210,000</span></div>
+    <div class="fact"><b>Zero premine</b><span>genesis pays nothing to anyone — verifiable</span></div>
+    <div class="fact"><b>~1,700 lines</b><span>of readable Python — audit the whole coin in an afternoon</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Genesis identity</h2>
+  <p>Hard-coded in the node software. Any tampering with the message breaks every node.</p>
+  <pre><code>e62c84b217ee71ac7a3da19b36545956aa4e16aad1911e7f72f50529925868ee</code></pre>
+</section>
+
+<section>
+  <h2>Quickstart</h2>
+  <pre><code>git clone https://github.com/…/klex-coin && cd klex-coin
+pip install -r requirements.txt
+
+python -m klex init        # node + genesis (the message is in there)
+python -m klex wallet new  # post-quantum keypair → KLEX1… address
+python -m klex mine        # earn 50 KLEX per block, real PoW
+python -m klex explore     # localhost block explorer
+python -m klex verify      # re-validate the whole chain from genesis</code></pre>
+</section>
+
+<section>
+  <h2>What it is not</h2>
+  <ul>
+    <li class="dim">not an investment product — no sale, no presale, no returns promised, ever</li>
+    <li class="dim">not a token on someone else's chain — KLEX is its own chain, its own rules</li>
+    <li class="dim">not quantum-proof in every layer — signatures are; it is a single small network with small hashrate, and it says so</li>
+    <li class="dim">not finished — roadmap: seed node, hardened liboqs signatures, a Rust core</li>
+  </ul>
+</section>
+
+<footer>
+  <p>Value starts at zero and stays there until people decide otherwise. That is a feature.</p>
+  <p>KLEX is issued without sale and runs as an open experiment · MIT license · no names, no promises.</p>
+</footer>
+
+</div>
+</body>
+</html>

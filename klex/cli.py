@@ -160,7 +160,8 @@ def cmd_sync(args) -> None:
         raise SystemExit(1)
     from . import net
 
-    net.sync(n, args.node)
+    added = net.sync(n, args.node)
+    print(f"synced {added} block(s) from {args.node} · now at height {n.state['height']}")
 
 
 def cmd_paper(args) -> None:
